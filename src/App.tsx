@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Settings } from 'lucide-react';
 import { SwitchButton } from "./components/shared/SwitchButton";
+import EnvironmentConfig from './components/Environment';
 import Playground from './components/Playground';
 
 function App() {
@@ -18,14 +19,14 @@ function App() {
             icon={Settings}
             text='Configurações'
             hasActions={true}
-            switchAction={toggleView} // Chame a função toggleView ao clicar no botão
+            switchAction={toggleView}
           />
         </div>
 
         {showEnvironmentConfig ? (
           <div className='p-6 space-y-4'>
             <h1 className='text-2xl'>Configuração de ambiente</h1>
-            {/* <EnvironmentConfig /> */} env
+            <EnvironmentConfig />
           </div>
         ) : (
           <div className='p-6 space-y-4'>
