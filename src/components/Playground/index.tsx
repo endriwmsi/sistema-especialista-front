@@ -1,15 +1,30 @@
 import { useState, useEffect } from 'react';
 import ActionButton from '../../components/Playground/partials/actionButton';
 
-export default function Playground() {
-  const [regrasData, setRegrasData] = useState([]);
-  const [currentRuleIndex, setCurrentRuleIndex] = useState(0);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState([]);
-  const [showResult, setShowResult] = useState(false);
+interface Rule {
+  name: string;
+  questions: Question[];
+  result: string;
+}
 
+interface Question {
+  title: string;
+  answer: boolean;
+}
+
+interface Answer {
+}
+
+
+
+export default function Playground() {
+  const [regrasData, setRegrasData] = useState<Rule[]>([]);
+  const [currentRuleIndex, setCurrentRuleIndex] = useState<number>(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
+  const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
+  const [showResult, setShowResult] = useState<boolean>(false);
   useEffect(() => {
-    fetch('http://localhost:8000/rules/')
+    fetch('http://localhost:8000/especialista/rules/')
       .then((response) => response.json())
       .then((data) => {
         setRegrasData(data);
@@ -28,7 +43,7 @@ export default function Playground() {
     }
   };
 
-  const handleSelectAnswer = (answer) => {
+  const handleSelectAnswer = (answer: Answer) => {
     userAnswers[currentQuestionIndex] = answer;
     setUserAnswers([...userAnswers]);
   };
@@ -79,10 +94,10 @@ export default function Playground() {
   };
 
   const resetRadioInputs = () => {
-    const form = document.forms['respostaForm'];
-    const radioInputs = form.elements['resposta'];
+    const form = document.forms.namedItem('respostaForm') as HTMLFormElement;
+    const radioInputs = form.elements.namedItem('resposta') as RadioNodeList;
     for (let i = 0; i < radioInputs.length; i++) {
-      radioInputs[i].checked = false;
+      (radioInputs[i] as HTMLInputElement).checked = false;
     }
   };
 
@@ -106,18 +121,19 @@ export default function Playground() {
 
   return (
     <div className="flex flex-col space-y-4 text-white text-center justify-center">
-      <h2>Teste Vocacional</h2>
+      <h1>Teste Vocacional</h1>
 
       <form name="respostaForm">
         <div className="flex flex-col bg-zinc-700 rounded-lg shadow-lg px-4 py-12 items-center">
           <span className="text-xl">{currentRule.questions[currentQuestionIndex].title}</span>
 
           <div className="flex justify-center space-x-4 mt-8">
-            <div className="w-24 bg-red-500 px-2 py-3 rounded-lg"
+            <div className="w-24 bg-red-500 px-2 py-3 rounded-lg hover:cursor-pointer hover:scale-110 transition duration-300 ease-in-out"
               onClick={() => {
                 handleSelectAnswer(false)
                 handleNextQuestion()
               }}>
+                <h1>NÃO</h1>
               <input
                 type="radio"
                 name="resposta"
@@ -126,11 +142,12 @@ export default function Playground() {
               />
             </div>
 
-            <div className="w-24 flex bg-emerald-500 px-2 py-3 rounded-lg justify-center"
+            <div className="w-24 flex bg-emerald-500 px-2 py-3 rounded-lg justify-center hover:cursor-pointer hover:scale-110 transition duration-300 ease-in-out"
               onClick={() => { 
                 handleSelectAnswer(true)
                 handleNextQuestion()
               }}>
+                <h1>SIM</h1>
               <input
                 type="radio"
                 name="resposta"
@@ -149,6 +166,7 @@ export default function Playground() {
         <ActionButton
           action={currentQuestionIndex === currentRule.questions.length - 1 ? checkUserAnswers : handleNextQuestion}
           text={currentQuestionIndex === currentRule.questions.length - 1 ? "Ver resultados" : "Próxima"}
+          hidden = {'hidden'}
         />
       </div>
     </div>
